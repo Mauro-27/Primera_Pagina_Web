@@ -1,0 +1,32 @@
+/* --- SECCION HERO --- */
+.hero {
+
+    padding: 4rem 2rem;
+    max-width: 1000px;
+    margin: 3rem auto; 
+    min-height: 40vh;
+    background-color: #f2f3f5;
+    border-radius: 20px;     
+    text-align: center;     
+    
+ 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* --- ESTILOS DEL TÍTULO */
+.hero h1 {
+    font-size: 3.5rem;
+    color: var(--secondary-color, #4a154b); 
+    margin-bottom: 1.5rem;
+}
+
+/* --- ESTILOS DEL PÁRRAFO --- */
+.hero p {
+    font-size: 1.2rem;
+    color: #444;
+    max-width: 700px; 
+    line-height: 1.6;
+}

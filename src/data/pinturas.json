@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "titulo": "cupcake Chocolate",
+    "precio": "$50.000",
+    "imagen": "/images/cupcake-chocolate.png"
+  },
+    {
+    "id": 2, 
+    "titulo": "cupcake frutilla",
+    "precio": "$50.000",
+    "imagen": "/images/cupcake-frutilla.png"
+  }
+]

@@ -1,0 +1,77 @@
+/* =========================================
+   PINTURA.CSS (Estilos de las tarjetas)
+   ========================================= */
+
+/* Contenedor: Usamos flexbox con un gap fuerte para separarlas */
+.gallery {
+    display: flex;
+    justify-content: center;
+    gap: 3rem; 
+    padding: 2rem;
+    flex-wrap: wrap; 
+}
+
+
+.art-card {
+    width: 270px; /* Podés ajustar este valor para hacerlas más anchas o angostas */
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px; /* Bordes redondeados */
+    overflow: hidden; /* Fundamental para que la foto respete los bordes redondeados */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Una sombra suave */
+    background: #fff;
+}
+
+.art-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+
+.art-image {
+    width: 100%;
+    height: 400px; /* Este es el alto que tendrán TODAS las fotos obligatoriamente */
+}
+
+.art-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Recorta la imagen automáticamente para llenar el cuadrado sin deformarla */
+    object-position: center; /* Centra el enfoque de la imagen */
+}
+
+
+.art-info {
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.art-info h3 {
+    color: var(--primary-color, #4b134f); 
+    font-size: 1.3rem;
+    margin-bottom: 0.8rem;
+}
+
+.price {
+    color: var(--secondary-color, #c94b4b);
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+
+
+/* Botón rojo "Ver Detalle" */
+.btn-buy {
+    background-color: var(--secondary-color, #c94b4b);
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-buy:hover {
+    background-color: var(--primary-color, #4b134f);
+}
