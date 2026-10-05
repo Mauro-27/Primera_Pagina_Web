@@ -4,26 +4,32 @@ import App from '../App.jsx';
 import RutasProtegidas from '../components/RutasProtegidas.jsx';
 import ErrorPage from '../views/ErrorPage.jsx';
 import Galeria from '../views/Galeria.jsx';
+import Favoritos from '../views/Favoritos.jsx';
 
 export const routes = createBrowserRouter([
   {
     path: '/',
+    element: <App />, 
+    children: [
+      {
+        path: '',
+        element: <Galeria /> 
+      },
+      {
+        path: '/favoritos',
+        element: <Favoritos />
+      }
+    ]
+  },
+  {
+    path: '/login',
     element: <Login />
   },
-  
   {
     element: <RutasProtegidas />, 
     children: [
-      {
-        path: '/app',
-        element: <App />, 
-        children: [
-          {
-            path: '',
-            element: <Galeria />
-          },
-        ]
-      }
+      // Este bloque queda limpio. A futuro podés poner acá rutas que 
+      // requieran estar logueado obligatoriamente.
     ]
   },
   {

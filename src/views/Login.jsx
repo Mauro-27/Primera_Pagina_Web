@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Container, Box, Typography, TextField, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { Container, Box, Typography, TextField, Button, Link, CircularProgress } from '@mui/material';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useAdmin } from '../hook/useAdmin.js';
 import adminService from '../service/adminService.js';
 
@@ -11,6 +11,7 @@ const Login = () => {
   const [usuario, setUsuario] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [error, setError] = useState(''); 
+  const [cargando, setCargando] = useState(false); // Estado para controlar la animación
 
   const validarUsuario = (user) => {
     if (/\d/.test(user)) {
@@ -33,13 +34,15 @@ const Login = () => {
     }
     
     if (usuario && contrasena) {
+      setCargando(true); // Bloqueamos el botón y mostramos el loader
+      
       try {
         const data = await adminService.login(usuario, contrasena);
-        
         guardarSesion(data);
-        navigate('/app');
+        navigate('/'); // Redirige al inicio tras loguearse
       } catch (err) {
         setError(err.message);
+        setCargando(false); // Si hay error, detenemos el loader para que pueda volver a intentar
       }
     }
   };
@@ -61,6 +64,7 @@ const Login = () => {
             label="Usuario"
             value={usuario}
             onChange={(e) => setUsuario(e.target.value)}
+            disabled={cargando} // Deshabilita el input mientras carga
             autoFocus
           />
           
@@ -72,6 +76,7 @@ const Login = () => {
             type="password"
             value={contrasena}
             onChange={(e) => setContrasena(e.target.value)}
+            disabled={cargando}
           />
 
           {error && (
@@ -80,9 +85,25 @@ const Login = () => {
             </Typography>
           )}
 
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-            Ingresar
+          <Button 
+            type="submit" 
+            fullWidth 
+            variant="contained" 
+            sx={{ mt: 3, mb: 2, height: '48px' }}
+            disabled={cargando} // Deshabilita el botón mientras carga
+          >
+            {/* Si está cargando muestra el círculo, si no, dice "Ingresar" */}
+            {cargando ? <CircularProgress size={24} color="inherit" /> : 'Ingresar'}
           </Button>
+          
+          <Box sx={{ textAlign: 'center', mt: 2 }}>
+            <Typography variant="body2" color="text.secondary">
+              ¿No tiene cuenta?{' '}
+              <Link component={RouterLink} to="/registro" variant="body2" underline="hover">
+                Regístrese
+              </Link>
+            </Typography>
+          </Box>
           
         </Box>
       </Box>
@@ -90,4 +111,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Login; 

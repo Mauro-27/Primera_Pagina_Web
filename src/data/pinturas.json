@@ -5,10 +5,16 @@
     "precio": "$50.000",
     "imagen": "/images/cupcake-chocolate.png"
   },
-    {
+  {
     "id": 2, 
     "titulo": "cupcake frutilla",
     "precio": "$50.000",
     "imagen": "/images/cupcake-frutilla.png"
+  },
+  {
+    "id": 3, 
+    "titulo": "pintura1",
+    "precio": "$50.000",
+    "imagen": "/images/pintura1.png"
   }
 ]

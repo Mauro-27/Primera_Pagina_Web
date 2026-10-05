@@ -3,7 +3,12 @@
     "id": 1,
     "nombre": "Mauro",
     "user": "admin",
-    "password": "123",
-    "sector": "Gerencia"
+    "password": "123"
+  },
+  {
+    "id": 2,
+    "nombre": "Gaston",
+    "user": "Gasti",
+    "password": "Mauroismael.1227"
   }
 ]

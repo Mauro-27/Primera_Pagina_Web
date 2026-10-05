@@ -14,6 +14,7 @@ const Galeria = () => {
             {pinturasData.map((obra) => (
                 <Pintura 
                     key={obra.id} 
+                    id={obra.id}
                     titulo={obra.titulo}
                     precio={obra.precio}
                     imagen={obra.imagen}
