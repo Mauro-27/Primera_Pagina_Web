@@ -5,6 +5,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import { theme } from './theme/theme.js';
 import { routes } from './router/routes.jsx'; 
 import { ProveedorAdmin } from './context/AdminContext.jsx';
+import { CarritoProvider } from './context/CarritoContext.jsx';
 import { FavoritosProvider } from './context/FavoritosContext.jsx'; // <-- IMPORTA ESTO
 import './css/global.css'; 
 
@@ -13,7 +14,9 @@ createRoot(document.getElementById('root')).render(
     <ThemeProvider theme={theme}>
       <ProveedorAdmin>
         <FavoritosProvider> {/* <-- ENVUELVE LA APP AQUÍ */}
-          <RouterProvider router={routes} />
+          <CarritoProvider>
+            <RouterProvider router={routes} />
+          </CarritoProvider>
         </FavoritosProvider>
       </ProveedorAdmin>
     </ThemeProvider>

@@ -30,3 +30,33 @@
     max-width: 700px; 
     line-height: 1.6;
 }
+
+/* Ocupa todo el ancho de la pantalla */
+.main-header {
+    width: 100%;
+    background-color: #d96c6c; /* Un rojo suave y agradable */
+    padding: 5rem 2rem; /* Mantiene la misma altura que tenías antes */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin: 0;
+}
+
+/* Contenedor interno para que el texto no se estire demasiado en monitores grandes */
+.header-content {
+    max-width: 800px;
+    color: #ffffff; /* El texto pasa a blanco para contrastar con el fondo rojo */
+}
+
+.header-content h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    font-style: italic;
+    font-weight: bold;
+}
+
+.header-content p {
+    font-size: 1.2rem;
+    line-height: 1.6;
+}

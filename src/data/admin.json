@@ -1,14 +1,11 @@
-[
-  {
-    "id": 1,
-    "nombre": "Mauro",
-    "user": "admin",
-    "password": "123"
-  },
-  {
-    "id": 2,
-    "nombre": "Gaston",
-    "user": "Gasti",
-    "password": "Mauroismael.1227"
-  }
-]
+{
+  "usuarios": [
+    {
+      "id": 1,
+      "usuario": "Tennsen12",
+      "nombre": "Mauro Campos",
+      "email": "mauroxcampos.12@gmail.com",
+      "contrasena": "Tennsen.12"
+    }
+  ]
+}

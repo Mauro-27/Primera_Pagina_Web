@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Container, Box, Typography, TextField, Button, Link, CircularProgress } from '@mui/material';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useAdmin } from '../hook/useAdmin.js';
-import adminService from '../service/adminService.js';
+import adminData from '../data/admin.json'; // Importamos tu base de datos simulada directamente
 
 const Login = () => {
   const { guardarSesion } = useAdmin();
@@ -11,39 +11,36 @@ const Login = () => {
   const [usuario, setUsuario] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [error, setError] = useState(''); 
-  const [cargando, setCargando] = useState(false); // Estado para controlar la animación
+  const [cargando, setCargando] = useState(false);
 
-  const validarUsuario = (user) => {
-    if (/\d/.test(user)) {
-      return 'El nombre de usuario no puede contener números.';
-    }
-    if (!/[A-Z]/.test(user)) {
-      return 'El nombre de usuario debe contener al menos una mayúscula.';
-    }
-    return null;
-  };
-
-  const manejarIngreso = async (e) => {
+  const manejarIngreso = (e) => {
     e.preventDefault();
     setError(''); 
     
-    const errorValidacion = validarUsuario(usuario);
-    if (errorValidacion) {
-      setError(errorValidacion);
-      return;
-    }
-    
     if (usuario && contrasena) {
-      setCargando(true); // Bloqueamos el botón y mostramos el loader
+      setCargando(true); 
       
-      try {
-        const data = await adminService.login(usuario, contrasena);
-        guardarSesion(data);
-        navigate('/'); // Redirige al inicio tras loguearse
-      } catch (err) {
-        setError(err.message);
-        setCargando(false); // Si hay error, detenemos el loader para que pueda volver a intentar
-      }
+      // Simulamos 1 segundo de carga para el efecto visual, pero garantizamos que termine
+      setTimeout(() => {
+        try {
+          // Buscamos si existe exactamente esa combinación en tu admin.json
+          const usuarioValido = adminData.usuarios.find(
+            (u) => u.usuario === usuario && u.contrasena === contrasena
+          );
+
+          if (usuarioValido) {
+            guardarSesion(usuarioValido);
+            navigate('/'); // Redirige al inicio (Galería)
+          } else {
+            // Si no coincide, frenamos la carga y mostramos el error
+            setError('El usuario o la contraseña no coinciden. Intente nuevamente.');
+            setCargando(false);
+          }
+        } catch (err) {
+          setError('Hubo un error interno al verificar los datos.');
+          setCargando(false);
+        }
+      }, 1000);
     }
   };
 
@@ -64,7 +61,7 @@ const Login = () => {
             label="Usuario"
             value={usuario}
             onChange={(e) => setUsuario(e.target.value)}
-            disabled={cargando} // Deshabilita el input mientras carga
+            disabled={cargando}
             autoFocus
           />
           
@@ -80,7 +77,7 @@ const Login = () => {
           />
 
           {error && (
-            <Typography color="error" variant="body2" sx={{ mt: 1, textAlign: 'center' }}>
+            <Typography color="error" variant="body2" sx={{ mt: 1, textAlign: 'center', fontWeight: 'bold' }}>
               {error}
             </Typography>
           )}
@@ -90,9 +87,8 @@ const Login = () => {
             fullWidth 
             variant="contained" 
             sx={{ mt: 3, mb: 2, height: '48px' }}
-            disabled={cargando} // Deshabilita el botón mientras carga
+            disabled={cargando}
           >
-            {/* Si está cargando muestra el círculo, si no, dice "Ingresar" */}
             {cargando ? <CircularProgress size={24} color="inherit" /> : 'Ingresar'}
           </Button>
           
@@ -111,4 +107,4 @@ const Login = () => {
   );
 };
 
-export default Login; 
+export default Login;

@@ -41,7 +41,7 @@ const manejarCierreSesion = () => {
                         <div className="user-dropdown-container" onClick={() => setMenuAbierto(!menuAbierto)}>
                             <div className="user-menu-trigger">
                                 <i className="fa-solid fa-user"></i>
-                                <span>{adminActivo.nombre}</span>
+                                <span>{adminActivo.usuario}</span>
                                 <i className="fa-solid fa-caret-down"></i> {/* Flechita hacia abajo */}
                             </div>
                             
@@ -60,7 +60,7 @@ const manejarCierreSesion = () => {
                     )}
 
                     {/* Ícono de Carrito */}
-                    <Link to="#" className="fav-link">
+                    <Link to="/carrito" className="fav-link">
                         <i className="fa-solid fa-cart-shopping"></i>
                     </Link>
                 </div>

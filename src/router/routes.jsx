@@ -1,10 +1,14 @@
 import { createBrowserRouter } from 'react-router-dom';
 import Login from '../views/Login.jsx';
+import Registro from '../views/Registro.jsx';
 import App from '../App.jsx';
 import RutasProtegidas from '../components/RutasProtegidas.jsx';
 import ErrorPage from '../views/ErrorPage.jsx';
 import Galeria from '../views/Galeria.jsx';
 import Favoritos from '../views/Favoritos.jsx';
+import Carrito from '../views/Carrito.jsx';
+import DetallePintura from '../views/DetallePintura.jsx'; // <-- IMPORTAMOS LA VISTA
+import MiCuenta from '../views/MiCuenta.jsx';
 
 export const routes = createBrowserRouter([
   {
@@ -13,11 +17,23 @@ export const routes = createBrowserRouter([
     children: [
       {
         path: '',
-        element: <Galeria /> 
+        element: <Galeria />
       },
       {
         path: '/favoritos',
         element: <Favoritos />
+      },
+      {
+        path: '/carrito',
+        element: <Carrito />
+      },
+      {
+        path: '/pintura/:id', // <-- NUEVA RUTA DINÁMICA
+        element: <DetallePintura />
+      },
+      {
+        path: '/mi-cuenta', // <-- 2. AGREGA ESTA RUTA
+        element: <MiCuenta />
       }
     ]
   },
@@ -26,11 +42,12 @@ export const routes = createBrowserRouter([
     element: <Login />
   },
   {
+    path: '/registro', // <-- 2. AGREGA LA RUTA DE REGISTRO
+    element: <Registro />
+  },
+  {
     element: <RutasProtegidas />, 
-    children: [
-      // Este bloque queda limpio. A futuro podés poner acá rutas que 
-      // requieran estar logueado obligatoriamente.
-    ]
+    children: []
   },
   {
     path: '*',
