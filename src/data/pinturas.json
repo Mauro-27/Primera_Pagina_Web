@@ -1,20 +1,29 @@
 [
   {
     "id": 1,
-    "titulo": "cupcake Chocolate",
+    "titulo": "Atardecer en el valle",
     "precio": "$50.000",
-    "imagen": "/images/cupcake-chocolate.png"
+    "imagen": "/images/cupcake-chocolate.png",
+    "categoria": "Óleo",
+    "descripcion": "Pintura original sobre lienzo, ideal para sala o dormitorio.",
+    "medidas": ["Alto: 50 cm", "Ancho: 70 cm", "Técnica: óleo sobre lienzo"]
   },
   {
-    "id": 2, 
-    "titulo": "cupcake frutilla",
-    "precio": "$50.000",
-    "imagen": "/images/cupcake-frutilla.png"
+    "id": 2,
+    "titulo": "Paisaje Unico",
+    "precio": "$10.000",
+    "imagen": "...",
+    "categoria": "Óleo",
+    "descripcion": "Pintura original sobre lienzo, ideal para sala o dormitorio.",
+    "medidas": ["Alto: 20 cm", "Ancho: 10 cm", "Técnica: óleo sobre lienzo"]
   },
   {
-    "id": 3, 
-    "titulo": "pintura1",
-    "precio": "$50.000",
-    "imagen": "/images/pintura1.png"
+    "id": 3,
+    "titulo": "Madre Unica",
+    "precio": "$100.000",
+    "imagen": "...",
+    "categoria": "Óleo",
+    "descripcion": "Pintura original sobre lienzo, ideal para sala o dormitorio.",
+    "medidas": ["Alto: 10 cm", "Ancho: 90 cm", "Técnica: óleo sobre lienzo"]
   }
 ]

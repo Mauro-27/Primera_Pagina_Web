@@ -1,62 +1,90 @@
-/* --- SECCION HERO --- */
-.hero {
-
-    padding: 4rem 2rem;
-    max-width: 1000px;
-    margin: 3rem auto; 
-    min-height: 40vh;
-    background-color: #f2f3f5;
-    border-radius: 20px;     
-    text-align: center;     
-    
- 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+/* ===== Header / Banner ===== */
+.header {
+  width: 100%;
+  /* Altura responsiva: 250px en celulares, 400px en monitores grandes */
+  height: 250px;
+  /* Imagen convertida a WebP */
+  background-image: url(/public/images/fondo-banner.png);
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* --- ESTILOS DEL TÍTULO */
-.hero h1 {
-    font-size: 3.5rem;
-    color: var(--secondary-color, #4a154b); 
-    margin-bottom: 1.5rem;
+/* Capa oscura semitransparente para que el texto blanco resalte más */
+.header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4); /* Ajusta el 0.4 para oscurecer más o menos */
+  z-index: 1;
 }
 
-/* --- ESTILOS DEL PÁRRAFO --- */
-.hero p {
-    font-size: 1.2rem;
-    color: #444;
-    max-width: 700px; 
-    line-height: 1.6;
+/* Equivalente al <Container> de MUI */
+.header__container {
+  position: relative;
+  z-index: 2; /* Por encima de la capa oscura */
+  text-align: center;
+  color: white;
+  width: 100%;
+  box-sizing: border-box;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 16px;
+  padding-right: 16px;
 }
 
-/* Ocupa todo el ancho de la pantalla */
-.main-header {
-    width: 100%;
-    background-color: #d96c6c; /* Un rojo suave y agradable */
-    padding: 5rem 2rem; /* Mantiene la misma altura que tenías antes */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    margin: 0;
+/* Título */
+.header__title {
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: bold;
+  font-style: italic;
+  line-height: 1.2;
+  letter-spacing: -0.00833em;
+  margin: 0 0 16px 0;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+  font-size: 3rem; /* Más pequeño en móvil */
 }
 
-/* Contenedor interno para que el texto no se estire demasiado en monitores grandes */
-.header-content {
-    max-width: 800px;
-    color: #ffffff; /* El texto pasa a blanco para contrastar con el fondo rojo */
+/* Subtítulo */
+.header__subtitle {
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: 0.0075em;
+  max-width: 800px;
+  margin: 0 auto;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+  font-size: 1rem;
 }
 
-.header-content h1 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    font-style: italic;
-    font-weight: bold;
+/* ===== Breakpoints (los mismos de MUI) ===== */
+@media (min-width: 600px) {
+  .header__container {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
 }
 
-.header-content p {
-    font-size: 1.2rem;
-    line-height: 1.6;
+@media (min-width: 900px) {
+  .header {
+    height: 400px;
+  }
+  .header__title {
+    font-size: 4.5rem;
+  }
+  .header__subtitle {
+    font-size: 1.25rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .header__container {
+    max-width: 1200px;
+  }
 }

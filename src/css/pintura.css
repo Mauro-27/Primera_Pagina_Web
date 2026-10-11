@@ -1,93 +1,121 @@
-/* --- TARJETA PRINCIPAL --- */
+/* ===== Tarjeta de pintura ===== */
 .art-card {
-    background-color: #fdfdfd;
-    border: 2px solid transparent; /* Borde invisible por defecto para mantener el espacio */
-    border-radius: 4px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    transition: all 0.2s ease; /* Aplica la transición suave al borde también */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid #eaeaea;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
 }
 
 .art-card:hover {
-    border-color: #c94b4b; /* El borde rojo solo se activa acá */
-    box-shadow: 0 6px 15px rgba(201, 75, 75, 0.15); 
-    transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
 }
 
 .art-link {
-    text-decoration: none;
-    color: inherit;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
 }
 
-/* --- SECCIÓN DE LA IMAGEN --- */
+.art-link:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: -2px;
+  border-radius: 12px;
+}
+
+/* ===== Imagen: todas las tarjetas del mismo tamaño ===== */
 .art-image {
-    background-color: #ffffff; /* Fondo blanco puro para la foto */
-    padding: 1rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 400px; /* Mantiene todas las fotos del mismo alto */
+  aspect-ratio: 4 / 5;
+  background: #f3f1ed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .art-image img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain; /* Evita que la imagen se estire o se corte */
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* cambia a "contain" si no quieres que se recorte la obra */
+  display: block;
 }
 
-/* --- SECCIÓN DEL TEXTO --- */
+.art-placeholder {
+  color: #9a9a9a;
+  font-size: 1rem;
+  padding: 16px;
+  text-align: center;
+}
+
+/* ===== Información ===== */
 .art-info {
-    padding: 1.5rem;
-    text-align: left; /* Alineación a la izquierda como en tu ejemplo */
-    background-color: #fafbfc; /* Fondo apenas gris/azulado para resaltar el área de texto */
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    border-top: 1px solid #f0f0f0; /* Línea sutil separando la imagen del texto */
+  padding: 14px 16px 16px;
+  border-top: 1px solid #eaeaea;
 }
 
 .art-info h3 {
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: #333333;
-    margin: 0 0 1rem 0;
-    line-height: 1.4;
-    font-family: inherit;
+  margin: 0 0 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.3;
+  /* Máximo 2 líneas para que las tarjetas no cambien de alto */
+  display: -webkit-box;
+  line-clamp: calc();
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .art-info .price {
-    font-size: 1.8rem; /* Precio mucho más grande y destacado */
-    font-weight: 700;
-    color: #111111;
-    margin: 0;
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
 }
 
-/* --- BOTÓN DE FAVORITOS (CORAZÓN) --- */
+/* ===== Botón de favoritos ===== */
 .btn-favorito {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: #ffffff;
-    border: 1px solid #eaeaea;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-    z-index: 10;
-    font-size: 1.1rem;
-    transition: all 0.2s ease;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: 1px solid #eaeaea;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #a0a0a0;
+  transition: color 0.15s ease, transform 0.15s ease;
 }
 
-.btn-favorito:hover { 
-    transform: scale(1.1);
-    border-color: #c94b4b;
+.btn-favorito:hover {
+  color: #c94b4b;
+}
+
+.btn-favorito:active {
+  transform: scale(0.92);
+}
+
+.btn-favorito:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.btn-favorito.is-active {
+  color: #c94b4b;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .art-card,
+  .btn-favorito {
+    transition: none;
+  }
 }

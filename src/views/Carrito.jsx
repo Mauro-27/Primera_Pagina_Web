@@ -1,56 +1,205 @@
-import { useContext } from 'react';
-import { CarritoContext } from '../context/CarritoContext.jsx';
-import { Box, Typography, Container, IconButton, Paper, Button } from '@mui/material';
+import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { CarritoContext } from '../context/CarritoContext';
+import { Container, Typography, IconButton, Button, TextField } from '@mui/material';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import '../css/carrito.css';
+
+// Códigos de descuento de ejemplo (porcentaje). Reemplázalos por los tuyos.
+const CODIGOS = {
+  DISFRUTA10: 10,
+};
+
+// Limpia el string del precio para evitar $NaN
+const parsePrice = (precio) => {
+  if (!precio) return 0;
+  if (typeof precio === 'number') return precio;
+  return Number(String(precio).replace(/[^0-9]/g, ''));
+};
+
+const formatear = (valor) => `$${valor.toLocaleString('es-AR')}`;
 
 const Carrito = () => {
-    const { carrito, eliminarDelCarrito } = useContext(CarritoContext);
+  const { carrito, eliminarDelCarrito, actualizarCantidad } = useContext(CarritoContext);
+  const [codigo, setCodigo] = useState('');
+  const [descuento, setDescuento] = useState(null); // { codigo, porcentaje }
+  const [errorCodigo, setErrorCodigo] = useState('');
 
+  const totalUnidades = carrito.reduce((acc, item) => acc + (item.cantidad || 1), 0);
+  const subtotal = carrito.reduce(
+    (acc, item) => acc + parsePrice(item.precio || item.price) * (item.cantidad || 1),
+    0
+  );
+  const montoDescuento = descuento ? Math.round((subtotal * descuento.porcentaje) / 100) : 0;
+  const total = subtotal - montoDescuento;
+
+  const aplicarCodigo = (e) => {
+    e.preventDefault();
+    const limpio = codigo.trim().toUpperCase();
+    if (!limpio) return;
+
+    if (CODIGOS[limpio]) {
+      setDescuento({ codigo: limpio, porcentaje: CODIGOS[limpio] });
+      setErrorCodigo('');
+    } else {
+      setDescuento(null);
+      setErrorCodigo('El código no es válido');
+    }
+  };
+
+  /* ===== Carrito vacío ===== */
+  if (carrito.length === 0) {
     return (
-        <Container maxWidth="lg" sx={{ mt: 5, minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-            
-            <Typography variant="h4" sx={{ color: 'var(--primary-color)', mb: 4, fontWeight: 'bold', fontStyle: 'italic' }}>
-                Mi Carrito
-            </Typography>
-
-            <Box sx={{ width: '100%', maxWidth: '850px' }}>
-                {carrito.length === 0 ? (
-                    <Box>
-                        <Typography sx={{ color: 'var(--text-muted)', fontSize: '1.2rem', mb: 3 }}>
-                            Tu carrito está vacío.
-                        </Typography>
-                        <Button component={Link} to="/" variant="contained" sx={{ bgcolor: 'var(--primary-color)' }}>
-                            Volver a la galería
-                        </Button>
-                    </Box>
-                ) : (
-                    carrito.map((item) => (
-                        <Paper 
-                            elevation={2}
-                            key={item.id} 
-                            sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2.5, mb: 3, borderRadius: '12px', bgcolor: 'var(--bg-card)' }}
-                        >
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-                                <img src={item.imagen} alt={item.titulo} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px' }} />
-                                <Box>
-                                    <Typography variant="h6" sx={{ color: 'var(--text-main)', fontWeight: 600 }}>
-                                        {item.titulo}
-                                    </Typography>
-                                    <Typography sx={{ color: 'var(--secondary-color)', fontSize: '1.1rem', fontWeight: 'bold' }}>
-                                        {item.precio} x {item.cantidad} unidad(es)
-                                    </Typography>
-                                </Box>
-                            </Box>
-
-                            <IconButton onClick={() => eliminarDelCarrito(item.id)} title="Eliminar" sx={{ color: 'var(--text-muted)', '&:hover': { color: 'var(--secondary-color)' } }}>
-                                <i className="fa-solid fa-trash-can"></i>
-                            </IconButton>
-                        </Paper>
-                    ))
-                )}
-            </Box>
-        </Container>
+      <Container className="carrito-vacio">
+        <ShoppingCartOutlinedIcon className="carrito-vacio-icono" />
+        <Typography variant="h5" fontWeight="bold">
+          Tu carrito está vacío
+        </Typography>
+        <Typography color="text.secondary">Cuando agregues una obra, la verás aquí.</Typography>
+        <Button component={Link} to="/" variant="contained" className="carrito-btn-principal">
+          Ver pinturas
+        </Button>
+      </Container>
     );
+  }
+
+  return (
+    <Container maxWidth="lg" className="carrito-container">
+      <h1 className="carrito-titulo">Carrito de compras</h1>
+
+      <div className="carrito-layout">
+        {/* ===== Izquierda: productos ===== */}
+        <section className="carrito-lista" aria-label="Productos en el carrito">
+          {carrito.map((item) => {
+            const imagen = item.img || item.imagen || item.url || '/images/default.png';
+            const nombre = item.nombre || item.titulo || item.name || 'Producto sin nombre';
+            const cantidad = item.cantidad || 1;
+            const precioUnitario = parsePrice(item.precio || item.price);
+
+            return (
+              <article key={item.id} className="carrito-item">
+                <div className="carrito-item-img-container">
+                  <img
+                    src={imagen}
+                    alt={nombre}
+                    className="carrito-item-img"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/images/default.png';
+                    }}
+                  />
+                </div>
+
+                <div className="carrito-item-info">
+                  <h2 className="carrito-item-nombre">{nombre}</h2>
+                  <p className="carrito-item-unitario">{formatear(precioUnitario)} c/u</p>
+                  <Button
+                    size="small"
+                    onClick={() => eliminarDelCarrito(item.id)}
+                    className="carrito-btn-eliminar"
+                    startIcon={<DeleteOutlinedIcon fontSize="small" />}
+                    aria-label={`Eliminar ${nombre} del carrito`}
+                  >
+                    Eliminar
+                  </Button>
+                </div>
+
+                <div className="carrito-cantidad-selector">
+                  <IconButton
+                    onClick={() => actualizarCantidad(item.id, cantidad - 1)}
+                    disabled={cantidad <= 1}
+                    className="carrito-btn-cantidad"
+                    aria-label="Restar una unidad"
+                  >
+                    <RemoveIcon fontSize="small" />
+                  </IconButton>
+                  <span className="carrito-cantidad-numero">{cantidad}</span>
+                  <IconButton
+                    onClick={() => actualizarCantidad(item.id, cantidad + 1)}
+                    className="carrito-btn-cantidad"
+                    aria-label="Sumar una unidad"
+                  >
+                    <AddIcon fontSize="small" />
+                  </IconButton>
+                </div>
+
+                <p className="carrito-item-precio">{formatear(precioUnitario * cantidad)}</p>
+              </article>
+            );
+          })}
+        </section>
+
+        {/* ===== Derecha: resumen + código ===== */}
+        <aside className="carrito-lateral">
+          <div className="carrito-caja">
+            <h2 className="carrito-caja-titulo">Resumen de compra</h2>
+
+            <div className="carrito-resumen-fila">
+              <span>Productos ({totalUnidades})</span>
+              <span>{formatear(subtotal)}</span>
+            </div>
+
+            {descuento && (
+              <div className="carrito-resumen-fila carrito-resumen-descuento">
+                <span>Descuento ({descuento.porcentaje}%)</span>
+                <span>-{formatear(montoDescuento)}</span>
+              </div>
+            )}
+
+            <div className="carrito-resumen-fila">
+              <span>Envío</span>
+              <span className="carrito-envio-gratis">Gratis</span>
+            </div>
+
+            <div className="carrito-resumen-fila carrito-resumen-total">
+              <span>Total</span>
+              <span>{formatear(total)}</span>
+            </div>
+
+            <Button
+              variant="contained"
+              fullWidth
+              size="large"
+              className="carrito-btn-principal"
+              onClick={() => console.log('Redirigir a pasarela de pagos')}
+            >
+              Continuar compra
+            </Button>
+
+            <p className="carrito-seguir">
+              o{' '}
+              <Link to="/" className="carrito-seguir-link">
+                Seguir comprando
+              </Link>
+            </p>
+          </div>
+
+          <form className="carrito-caja" onSubmit={aplicarCodigo}>
+            <label htmlFor="codigo-descuento" className="carrito-codigo-label">
+              ¿Tienes un código de descuento?
+            </label>
+            <TextField
+              id="codigo-descuento"
+              size="small"
+              fullWidth
+              placeholder="Ingresa tu código"
+              value={codigo}
+              onChange={(e) => setCodigo(e.target.value)}
+              error={Boolean(errorCodigo)}
+              helperText={errorCodigo || (descuento ? `Código ${descuento.codigo} aplicado` : ' ')}
+              className="carrito-codigo-input"
+            />
+            <Button type="submit" variant="outlined" fullWidth className="carrito-btn-secundario">
+              Aplicar descuento
+            </Button>
+          </form>
+        </aside>
+      </div>
+    </Container>
+  );
 };
 
 export default Carrito;
