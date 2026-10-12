@@ -27,7 +27,7 @@ const manejarCierreSesion = () => {
 
                 <ul className="nav-links">
                     <li><Link to="/">Inicio</Link></li>
-                    <li><Link to="/">Pinturas</Link></li>
+                    <li><Link to="/">Prodctos</Link></li>
                 </ul>
 
                 <div className="nav-icons">

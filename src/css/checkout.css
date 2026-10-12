@@ -1,0 +1,76 @@
+/* ===== Formulario de envío ===== */
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 16px;
+  margin-bottom: 8px;
+}
+
+.checkout-completo {
+  grid-column: 1 / -1;
+}
+
+.checkout-grid .MuiOutlinedInput-root {
+  border-radius: 8px;
+}
+
+/* ===== Validación en vivo: check verde / X roja ===== */
+.checkout-icono-ok {
+  color: #2e9e4f;
+  font-size: 1.15rem;
+}
+
+.checkout-icono-error {
+  color: #c94b4b;
+  font-size: 1.15rem;
+}
+
+/* Borde y etiqueta en verde cuando el dato es correcto */
+.checkout-valido .MuiOutlinedInput-notchedOutline {
+  border-color: #2e9e4f !important;
+}
+
+.checkout-valido .MuiInputLabel-root {
+  color: #2e9e4f;
+}
+
+/* En la lista de provincias, el ícono no debe tapar la flechita del desplegable */
+.checkout-select .MuiInputAdornment-root {
+  margin-right: 28px;
+}
+
+/* ===== Lista de productos del resumen ===== */
+.checkout-items {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0 0 16px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.checkout-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.checkout-item:last-child {
+  margin-bottom: 0;
+}
+
+.checkout-item-nombre {
+  min-width: 0;
+}
+
+.checkout-item-cant {
+  color: var(--text-muted, #6b6b6b);
+}
+
+/* ===== Celulares ===== */
+@media (max-width: 600px) {
+  .checkout-grid {
+    grid-template-columns: 1fr;
+  }
+}

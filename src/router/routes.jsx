@@ -9,6 +9,8 @@ import Favoritos from '../views/Favoritos.jsx';
 import Carrito from '../views/Carrito.jsx';
 import DetallePintura from '../views/DetallePintura.jsx'; // <-- IMPORTAMOS LA VISTA
 import MiCuenta from '../views/MiCuenta.jsx';
+import ResultadoPago from '../views/ResultadoPago.jsx';
+import Checkout from '../views/Checkout.jsx';
 
 export const routes = createBrowserRouter([
   {
@@ -26,6 +28,14 @@ export const routes = createBrowserRouter([
       {
         path: '/carrito',
         element: <Carrito />
+      },
+      {
+        path: '/checkout',
+        element: <Checkout />
+      },
+      {
+        path: '/pago/:estado', // <-- NUEVA: resultado del pago
+        element: <ResultadoPago />
       },
       {
         path: '/pintura/:id', // <-- NUEVA RUTA DINÁMICA

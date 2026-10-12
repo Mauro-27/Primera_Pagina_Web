@@ -1,39 +1,26 @@
 import { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { CarritoContext } from '../context/CarritoContext';
 import { Container, Typography, IconButton, Button, TextField } from '@mui/material';
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import {
+  CODIGOS,
+  formatear,
+  precioDeItem,
+  subtotalCarrito,
+  descuentoCarrito,
+} from '../utils/CarritoUtils';
 import '../css/carrito.css';
-
-// Códigos de descuento de ejemplo (porcentaje). Reemplázalos por los tuyos.
-const CODIGOS = {
-  DISFRUTA10: 10,
-};
-
-// Limpia el string del precio para evitar $NaN
-const parsePrice = (precio) => {
-  if (!precio) return 0;
-  if (typeof precio === 'number') return precio;
-  return Number(String(precio).replace(/[^0-9]/g, ''));
-};
-
-const formatear = (valor) => `$${valor.toLocaleString('es-AR')}`;
 
 const Carrito = () => {
   const { carrito, eliminarDelCarrito, actualizarCantidad } = useContext(CarritoContext);
+  const navigate = useNavigate();
   const [codigo, setCodigo] = useState('');
   const [descuento, setDescuento] = useState(null); // { codigo, porcentaje }
   const [errorCodigo, setErrorCodigo] = useState('');
 
   const totalUnidades = carrito.reduce((acc, item) => acc + (item.cantidad || 1), 0);
-  const subtotal = carrito.reduce(
-    (acc, item) => acc + parsePrice(item.precio || item.price) * (item.cantidad || 1),
-    0
-  );
-  const montoDescuento = descuento ? Math.round((subtotal * descuento.porcentaje) / 100) : 0;
+  const subtotal = subtotalCarrito(carrito);
+  const montoDescuento = descuentoCarrito(carrito, descuento ? descuento.porcentaje : 0);
   const total = subtotal - montoDescuento;
 
   const aplicarCodigo = (e) => {
@@ -50,11 +37,16 @@ const Carrito = () => {
     }
   };
 
+  // Pasa a la pantalla de datos de envío (el pago se inicia ahí)
+  const continuarCompra = () => {
+    navigate('/checkout', { state: { codigo: descuento ? descuento.codigo : null } });
+  };
+
   /* ===== Carrito vacío ===== */
   if (carrito.length === 0) {
     return (
       <Container className="carrito-vacio">
-        <ShoppingCartOutlinedIcon className="carrito-vacio-icono" />
+        <i className="fa-solid fa-cart-shopping carrito-vacio-icono"></i>
         <Typography variant="h5" fontWeight="bold">
           Tu carrito está vacío
         </Typography>
@@ -77,7 +69,7 @@ const Carrito = () => {
             const imagen = item.img || item.imagen || item.url || '/images/default.png';
             const nombre = item.nombre || item.titulo || item.name || 'Producto sin nombre';
             const cantidad = item.cantidad || 1;
-            const precioUnitario = parsePrice(item.precio || item.price);
+            const precioUnitario = precioDeItem(item);
 
             return (
               <article key={item.id} className="carrito-item">
@@ -100,7 +92,7 @@ const Carrito = () => {
                     size="small"
                     onClick={() => eliminarDelCarrito(item.id)}
                     className="carrito-btn-eliminar"
-                    startIcon={<DeleteOutlinedIcon fontSize="small" />}
+                    startIcon={<i className="fa-regular fa-trash-can"></i>}
                     aria-label={`Eliminar ${nombre} del carrito`}
                   >
                     Eliminar
@@ -114,7 +106,7 @@ const Carrito = () => {
                     className="carrito-btn-cantidad"
                     aria-label="Restar una unidad"
                   >
-                    <RemoveIcon fontSize="small" />
+                    <i className="fa-solid fa-minus" style={{ fontSize: '0.8rem' }}></i>
                   </IconButton>
                   <span className="carrito-cantidad-numero">{cantidad}</span>
                   <IconButton
@@ -122,7 +114,7 @@ const Carrito = () => {
                     className="carrito-btn-cantidad"
                     aria-label="Sumar una unidad"
                   >
-                    <AddIcon fontSize="small" />
+                    <i className="fa-solid fa-plus" style={{ fontSize: '0.8rem' }}></i>
                   </IconButton>
                 </div>
 
@@ -164,7 +156,7 @@ const Carrito = () => {
               fullWidth
               size="large"
               className="carrito-btn-principal"
-              onClick={() => console.log('Redirigir a pasarela de pagos')}
+              onClick={continuarCompra}
             >
               Continuar compra
             </Button>

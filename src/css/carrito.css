@@ -224,6 +224,13 @@
   border-color: var(--primary-color) !important;
 }
 
+.carrito-error-pago {
+  margin: 12px 0 0;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #c94b4b;
+}
+
 /* ===== Carrito vacío ===== */
 .carrito-vacio {
   display: flex;
