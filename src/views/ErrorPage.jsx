@@ -32,7 +32,7 @@ const ErrorPage = () => {
           variant="contained" 
           color="primary" 
           size="large"
-          onClick={() => navigate('/app')}
+          onClick={() => navigate('/')}
         >
           Volver al Inicio
         </Button>

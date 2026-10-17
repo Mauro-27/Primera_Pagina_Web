@@ -1,0 +1,345 @@
+/* ===== Variables ===== */
+.detalle {
+  --fuente-titulo: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --borde: #eaeaea;
+  --texto: #1f1b16;
+  --texto-suave: var(--text-muted, #6b6b6b);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 24px 64px;
+  color: var(--texto);
+}
+
+/* ===== Estados (cargando / no encontrada) ===== */
+.detalle-estado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 80px 16px;
+  text-align: center;
+}
+
+.detalle-enlace {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* ===== Migas de pan ===== */
+.detalle-migas {
+  margin-bottom: 20px;
+}
+
+.detalle-migas ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--texto-suave);
+}
+
+.detalle-migas li + li::before {
+  content: '/';
+  margin-right: 6px;
+  color: #b5afa6;
+}
+
+.detalle-migas a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.detalle-migas a:hover {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
+.detalle-migas [aria-current='page'] {
+  color: var(--texto);
+  font-weight: 600;
+}
+
+/* ===== Layout ===== */
+.detalle-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
+}
+
+/* ===== Imagen ===== */
+.detalle-imagen {
+  position: relative;
+  aspect-ratio: 1 / 1.08;
+  background: #f3f1ed;
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detalle-imagen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* cambia a "contain" si no quieres que se recorte la obra */
+  display: block;
+}
+
+.detalle-sin-imagen {
+  color: #9a9a9a;
+  font-size: 1.05rem;
+}
+
+.detalle-chip-imagen {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(4px);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--texto);
+}
+
+/* ===== Panel de compra ===== */
+.detalle-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.detalle-etiqueta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #f8e8d4;
+  color: #8a4b12;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.detalle-etiqueta.agotada {
+  background: #e6e3de;
+  color: #5b564f;
+}
+
+.detalle-titulo {
+  margin: 0 0 14px;
+  font-family: var(--fuente-titulo);
+  font-size: clamp(1.9rem, 3.4vw, 2.6rem);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  color: var(--texto);
+}
+
+.detalle-precio {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--texto);
+}
+
+.detalle-nota-precio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0 20px;
+  font-size: 0.82rem;
+  color: var(--texto-suave);
+}
+
+.detalle-descripcion {
+  margin: 0 0 20px;
+  max-width: 60ch;
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: #4d463d;
+  white-space: pre-line;
+}
+
+/* ===== Medidas ===== */
+.detalle-medidas {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 0 24px;
+  padding: 0;
+  list-style: none;
+  font-size: 0.93rem;
+}
+
+.detalle-medidas li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.detalle-check {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--primary-color);
+  color: #ffffff;
+  font-size: 0.62rem;
+}
+
+/* ===== Cantidad ===== */
+.detalle-cantidad {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+  font-size: 0.92rem;
+  color: var(--texto-suave);
+}
+
+.detalle-cantidad-control {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 999px;
+  padding: 0 4px;
+  color: var(--texto);
+}
+
+.detalle-cantidad-control strong {
+  min-width: 34px;
+  text-align: center;
+}
+
+.detalle-cantidad-control button {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.detalle-cantidad-control button:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.detalle-cantidad-control button:disabled {
+  color: #c2bdb4;
+  cursor: default;
+}
+
+/* ===== Botones ===== */
+.detalle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 20px;
+  border: 0;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.detalle-btn:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.detalle-btn--principal {
+  width: 100%;
+  padding: 16px 20px;
+  background: var(--primary-color);
+  color: #ffffff;
+  font-size: 1rem;
+}
+
+.detalle-btn--principal:hover:not(:disabled) {
+  filter: brightness(0.92);
+}
+
+.detalle-btn:disabled {
+  background: #d8d4cc;
+  color: #7a746b;
+  cursor: not-allowed;
+}
+
+.detalle-acciones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.detalle-btn--secundario {
+  background: #efebe4;
+  color: var(--texto);
+  font-size: 0.85rem;
+}
+
+.detalle-btn--secundario:hover:not(:disabled) {
+  background: #e5dfd5;
+}
+
+.detalle-btn--secundario.es-favorito {
+  color: #c94b4b;
+}
+
+/* ===== Aviso (toast) ===== */
+.detalle-toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 32px;
+  border-radius: 4px;
+  background: #2f3136;
+  color: #ffffff;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.detalle-toast i {
+  color: #6cc14a;
+  font-size: 1.2rem;
+}
+
+/* ===== Tablet y celular ===== */
+@media (max-width: 900px) {
+  .detalle {
+    padding: 16px 16px 48px;
+  }
+
+  .detalle-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+}
+
+@media (max-width: 460px) {
+  .detalle-acciones {
+    grid-template-columns: 1fr;
+  }
+}

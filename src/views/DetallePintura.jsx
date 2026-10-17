@@ -1,37 +1,85 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import { Box, Typography, Button, Container, Grid, IconButton, Snackbar } from '@mui/material';
-import { useState, useContext } from 'react';
-import pinturasData from '../data/pinturas.json';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useState, useContext, useEffect } from 'react';
+import { CircularProgress, Snackbar } from '@mui/material';
+import { supabase, urlImagen } from '../service/supabase';
+import { mostrarPrecio } from '../utils/carritoUtils';
 import { CarritoContext } from '../context/CarritoContext.jsx';
+import { FavoritosContext } from '../context/FavoritosContext.jsx';
+import '../css/detalle.css';
 
 const DetallePintura = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+
+    const [obra, setObra] = useState(null);
+    const [cargando, setCargando] = useState(true);
+    const [errorImagen, setErrorImagen] = useState(false);
     const [cantidad, setCantidad] = useState(1);
     const [notificacion, setNotificacion] = useState(false);
-    const [favorito, setFavorito] = useState(false);
+
     const { agregarAlCarrito } = useContext(CarritoContext);
+    const { favoritos, toggleFavorito } = useContext(FavoritosContext);
 
-    const obra = pinturasData.find(p => p.id === parseInt(id));
+    useEffect(() => {
+        let activo = true;
 
-    if (!obra) {
+        const cargarObra = async () => {
+            setCargando(true);
+            setErrorImagen(false);
+            setCantidad(1);
+
+            const { data, error } = await supabase
+                .from('pinturas') // <-- nombre de tu tabla
+                .select('*')
+                .eq('id', id)
+                .maybeSingle();
+
+            if (!activo) return;
+            if (error) console.error('Error al cargar la obra:', error);
+
+            // Convierte el nombre del archivo en la dirección completa de la foto
+            setObra(data ? { ...data, imagen: urlImagen(data.imagen) } : null);
+            setCargando(false);
+        };
+
+        cargarObra();
+
+        return () => {
+            activo = false;
+        };
+    }, [id]);
+
+    if (cargando) {
         return (
-            <Container sx={{ mt: 5 }}>
-                <Typography>Obra no encontrada</Typography>
-            </Container>
+            <div className="detalle-estado">
+                <CircularProgress sx={{ color: 'var(--primary-color)' }} aria-label="Cargando obra" />
+            </div>
         );
     }
 
-    // Campos opcionales: si tu JSON no los tiene, simplemente no se muestran
-    // obra.categoria -> "Óleo", "Acuarela"...
-    // obra.descripcion -> texto largo
-    // obra.medidas -> ["Alto: 50 cm", "Ancho: 70 cm", "Técnica: óleo sobre lienzo"]
+    if (!obra) {
+        return (
+            <div className="detalle-estado">
+                <p>Obra no encontrada.</p>
+                <Link to="/productos" className="detalle-enlace">
+                    Ver todas las obras
+                </Link>
+            </div>
+        );
+    }
+
+    /* ===== Datos derivados ===== */
+    const agotada = typeof obra.stock === 'number' && obra.stock <= 0;
+    const unica = obra.stock === 1;
+    const maximo = typeof obra.stock === 'number' ? obra.stock : 99; // no se puede pedir más que el stock
+    const esFavorito = favoritos.some((item) => item.id === obra.id);
+
+    // Campo opcional: lista de medidas o detalles (por ejemplo ["Alto: 50 cm", "Técnica: óleo"])
     const medidas = Array.isArray(obra.medidas) ? obra.medidas : [];
 
-    const manejarCantidad = (operacion) => {
-        if (operacion === 'restar' && cantidad > 1) setCantidad(cantidad - 1);
-        if (operacion === 'sumar') setCantidad(cantidad + 1);
-    };
+    /* ===== Acciones ===== */
+    const cambiarCantidad = (delta) =>
+        setCantidad((actual) => Math.min(Math.max(actual + delta, 1), maximo));
 
     const manejarAgregar = () => {
         agregarAlCarrito(obra, cantidad);
@@ -40,185 +88,142 @@ const DetallePintura = () => {
 
     const manejarComprarAhora = () => {
         agregarAlCarrito(obra, cantidad);
-        navigate('/carrito'); // Ajusta la ruta a la de tu carrito
+        navigate('/carrito');
     };
 
+    const manejarFavorito = () =>
+        toggleFavorito({ id: obra.id, imagen: obra.imagen, titulo: obra.titulo, precio: obra.precio });
+
     return (
-        <Container maxWidth="lg" sx={{ mt: { xs: 3, md: 5 }, mb: 8 }}>
-            {/* Volver */}
-            <Button
-                onClick={() => navigate(-1)}
-                startIcon={<i className="fa-solid fa-arrow-left"></i>}
-                sx={{ mb: 3, color: 'var(--text-muted)', textTransform: 'none', fontSize: '0.95rem' }}
-            >
-                Volver
-            </Button>
-
-            <Grid container spacing={{ xs: 4, md: 8 }}>
-                {/* Imagen */}
-                <Grid item xs={12} md={6}>
-                    <Box
-                        sx={{
-                            width: '100%',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            bgcolor: '#ffffff',
-                            border: '1px solid #eaeaea',
-                            borderRadius: '16px',
-                            p: { xs: 2, md: 4 },
-                            boxSizing: 'border-box'
-                        }}
-                    >
-                        <img
-                            src={obra.imagen}
-                            alt={obra.titulo}
-                            style={{ width: '100%', maxHeight: '560px', objectFit: 'contain', display: 'block' }}
-                        />
-                    </Box>
-                </Grid>
-
-                {/* Información */}
-                <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div className="detalle">
+            {/* ===== Migas de pan ===== */}
+            <nav className="detalle-migas" aria-label="Ubicación">
+                <ol>
+                    <li>
+                        <Link to="/">Inicio</Link>
+                    </li>
+                    <li>
+                        <Link to="/productos">Productos</Link>
+                    </li>
                     {obra.categoria && (
-                        <Typography
-                            sx={{ color: 'var(--primary-color)', fontWeight: 600, fontSize: '0.95rem', mb: 1 }}
-                        >
-                            {obra.categoria}
-                        </Typography>
+                        <li>
+                            <Link to={`/productos?categoria=${encodeURIComponent(obra.categoria)}`}>
+                                {obra.categoria}
+                            </Link>
+                        </li>
+                    )}
+                    <li aria-current="page">{obra.titulo}</li>
+                </ol>
+            </nav>
+
+            <div className="detalle-layout">
+                {/* ===== Izquierda: imagen ===== */}
+                <div className="detalle-imagen">
+                    {obra.imagen && !errorImagen ? (
+                        <img src={obra.imagen} alt={obra.titulo} onError={() => setErrorImagen(true)} />
+                    ) : (
+                        <span className="detalle-sin-imagen">Sin imagen</span>
                     )}
 
-                    <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', mb: 1.5 }}>
-                        {obra.titulo}
-                    </Typography>
+                </div>
 
-                    <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3 }}>
-                        {obra.precio}
-                    </Typography>
-
-                    {obra.descripcion && (
-                        <Typography
-                            sx={{ color: 'var(--text-muted)', lineHeight: 1.7, mb: 3, maxWidth: '60ch' }}
-                        >
-                            {obra.descripcion}
-                        </Typography>
+                {/* ===== Derecha: panel de compra ===== */}
+                <div className="detalle-panel">
+                    {(unica || agotada) && (
+                        <span className={`detalle-etiqueta ${agotada ? 'agotada' : ''}`}>
+                            <i
+                                className={agotada ? 'fa-solid fa-circle-xmark' : 'fa-solid fa-certificate'}
+                                aria-hidden="true"
+                            ></i>
+                            {agotada ? 'Agotada' : 'Pieza única'}
+                        </span>
                     )}
 
-                    {/* Medidas / detalles con check */}
+                    <h1 className="detalle-titulo">{obra.titulo}</h1>
+
+                    <p className="detalle-precio">{mostrarPrecio(obra.precio)}</p>
+                    <p className="detalle-nota-precio">
+                        <i className="fa-solid fa-lock" aria-hidden="true"></i>
+                        Pago seguro con Mercado Pago
+                    </p>
+
+                    {obra.descripcion && <p className="detalle-descripcion">{obra.descripcion}</p>}
+
                     {medidas.length > 0 && (
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25, mb: 4 }}>
+                        <ul className="detalle-medidas">
                             {medidas.map((medida) => (
-                                <Box key={medida} sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                    <Box
-                                        sx={{
-                                            width: 22,
-                                            height: 22,
-                                            borderRadius: '50%',
-                                            bgcolor: 'var(--primary-color)',
-                                            color: '#fff',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            fontSize: '0.65rem',
-                                            flexShrink: 0
-                                        }}
-                                    >
+                                <li key={medida}>
+                                    <span className="detalle-check" aria-hidden="true">
                                         <i className="fa-solid fa-check"></i>
-                                    </Box>
-                                    <Typography sx={{ fontSize: '0.95rem' }}>{medida}</Typography>
-                                </Box>
+                                    </span>
+                                    {medida}
+                                </li>
                             ))}
-                        </Box>
+                        </ul>
                     )}
 
-                    {/* Cantidad + Agregar al carrito */}
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2, flexWrap: 'wrap' }}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                border: '1px solid #ccc',
-                                borderRadius: '999px',
-                                px: 0.5
-                            }}
-                        >
-                            <IconButton
-                                onClick={() => manejarCantidad('restar')}
-                                size="small"
-                                disabled={cantidad === 1}
-                                aria-label="Restar una unidad"
-                            >
-                                <i className="fa-solid fa-minus" style={{ fontSize: '0.8rem' }}></i>
-                            </IconButton>
-                            <Typography sx={{ px: 2, fontWeight: 'bold', minWidth: 32, textAlign: 'center' }}>
-                                {cantidad}
-                            </Typography>
-                            <IconButton
-                                onClick={() => manejarCantidad('sumar')}
-                                size="small"
-                                aria-label="Sumar una unidad"
-                            >
-                                <i className="fa-solid fa-plus" style={{ fontSize: '0.8rem' }}></i>
-                            </IconButton>
-                        </Box>
+                    {/* Cantidad: solo si se puede pedir más de una unidad */}
+                    {!agotada && maximo > 1 && (
+                        <div className="detalle-cantidad">
+                            <span>Cantidad</span>
+                            <div className="detalle-cantidad-control">
+                                <button
+                                    type="button"
+                                    onClick={() => cambiarCantidad(-1)}
+                                    disabled={cantidad <= 1}
+                                    aria-label="Restar una unidad"
+                                >
+                                    <i className="fa-solid fa-minus"></i>
+                                </button>
+                                <strong aria-live="polite">{cantidad}</strong>
+                                <button
+                                    type="button"
+                                    onClick={() => cambiarCantidad(1)}
+                                    disabled={cantidad >= maximo}
+                                    aria-label="Sumar una unidad"
+                                >
+                                    <i className="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    )}
 
-                        <Button
-                            variant="outlined"
-                            size="large"
+                    {/* Botones */}
+                    <button
+                        type="button"
+                        className="detalle-btn detalle-btn--principal"
+                        onClick={manejarComprarAhora}
+                        disabled={agotada}
+                    >
+                        {agotada ? 'Agotada' : 'Comprar ahora'}
+                    </button>
+
+                    <div className="detalle-acciones">
+                        <button
+                            type="button"
+                            className="detalle-btn detalle-btn--secundario"
                             onClick={manejarAgregar}
-                            startIcon={<i className="fa-solid fa-cart-shopping"></i>}
-                            sx={{
-                                flex: 1,
-                                minWidth: 200,
-                                py: 1.25,
-                                borderRadius: '999px',
-                                textTransform: 'none',
-                                fontWeight: 600,
-                                color: 'var(--primary-color)',
-                                borderColor: 'var(--primary-color)',
-                                '&:hover': { borderColor: 'var(--primary-color)', bgcolor: 'rgba(0,0,0,0.04)' }
-                            }}
+                            disabled={agotada}
                         >
-                            Agregar al carrito
-                        </Button>
-                    </Box>
+                            <i className="fa-solid fa-bag-shopping" aria-hidden="true"></i>
+                            Añadir al carrito
+                        </button>
 
-                    {/* Comprar ahora + Favorito */}
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <IconButton
-                            onClick={() => setFavorito(!favorito)}
-                            aria-label={favorito ? 'Quitar de favoritos' : 'Guardar en favoritos'}
-                            aria-pressed={favorito}
-                            sx={{
-                                width: 48,
-                                height: 48,
-                                bgcolor: 'rgba(0,0,0,0.05)',
-                                color: favorito ? '#d6336c' : 'var(--primary-color)'
-                            }}
+                        <button
+                            type="button"
+                            className={`detalle-btn detalle-btn--secundario ${esFavorito ? 'es-favorito' : ''}`}
+                            onClick={manejarFavorito}
+                            aria-pressed={esFavorito}
                         >
-                            <i className={favorito ? 'fa-solid fa-heart' : 'fa-regular fa-heart'}></i>
-                        </IconButton>
-
-                        <Button
-                            variant="contained"
-                            size="large"
-                            onClick={manejarComprarAhora}
-                            sx={{
-                                flex: 1,
-                                py: 1.5,
-                                borderRadius: '999px',
-                                textTransform: 'none',
-                                fontWeight: 600,
-                                bgcolor: 'var(--primary-color)',
-                                boxShadow: 'none',
-                                '&:hover': { bgcolor: 'var(--primary-color)', filter: 'brightness(0.92)', boxShadow: 'none' }
-                            }}
-                        >
-                            Comprar ahora
-                        </Button>
-                    </Box>
-                </Grid>
-            </Grid>
+                            <i
+                                className={esFavorito ? 'fa-solid fa-heart' : 'fa-regular fa-heart'}
+                                aria-hidden="true"
+                            ></i>
+                            {esFavorito ? 'Guardado en favoritos' : 'Guardar en favoritos'}
+                        </button>
+                    </div>
+                </div>
+            </div>
 
             {/* Aviso tipo toast */}
             <Snackbar
@@ -227,24 +232,12 @@ const DetallePintura = () => {
                 onClose={() => setNotificacion(false)}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             >
-                <Box
-                    sx={{
-                        bgcolor: '#2f3136',
-                        color: '#ffffff',
-                        px: 4,
-                        py: 1.5,
-                        borderRadius: '4px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1.5,
-                        boxShadow: '0 4px 10px rgba(0,0,0,0.3)'
-                    }}
-                >
-                    <i className="fa-solid fa-circle-check" style={{ color: '#6cc14a', fontSize: '1.2rem' }}></i>
-                    <Typography sx={{ fontSize: '0.95rem' }}>Agregado al carrito</Typography>
-                </Box>
+                <div className="detalle-toast" role="status">
+                    <i className="fa-solid fa-circle-check" aria-hidden="true"></i>
+                    <span>Agregado al carrito</span>
+                </div>
             </Snackbar>
-        </Container>
+        </div>
     );
 };
 

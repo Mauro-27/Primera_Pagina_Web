@@ -131,6 +131,8 @@
   font-family: inherit;
   font-size: 1.15rem;
   font-weight: 700;
+  text-align: left;
+  color: #1f1b16;
 }
 
 .carrito-resumen-fila {

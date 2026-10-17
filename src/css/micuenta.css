@@ -1,0 +1,25 @@
+/* Contenido a la izquierda, menú de la cuenta a la derecha.
+   Usa CSS grid en vez del Grid de MUI, que en tu versión dejaba las columnas apretadas. */
+.micuenta-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 32px;
+  align-items: start;
+}
+
+.micuenta-contenido,
+.micuenta-menu {
+  min-width: 0;
+}
+
+/* Celular y tablet: el menú pasa arriba y todo ocupa el ancho completo */
+@media (max-width: 900px) {
+  .micuenta-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+
+  .micuenta-menu {
+    order: -1;
+  }
+}

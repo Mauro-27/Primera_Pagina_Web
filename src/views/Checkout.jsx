@@ -1,7 +1,9 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link, Navigate, useLocation } from 'react-router-dom';
 import { Button, Container, InputAdornment, MenuItem, TextField } from '@mui/material';
 import { CarritoContext } from '../context/CarritoContext';
+import { useAdmin } from '../hook/useAdmin.js';
+import { obtenerDatos, aFormularioEnvio, tieneDireccionCompleta } from '../service/datosUsuario';
 import {
   CODIGOS,
   formatear,
@@ -119,6 +121,33 @@ const Checkout = () => {
   const [procesando, setProcesando] = useState(false);
   const [errorPago, setErrorPago] = useState('');
 
+  // Dirección guardada en "Mis datos" (solo si la persona inició sesión y la completó)
+  const { adminActivo } = useAdmin();
+  const usuario = adminActivo?.usuario;
+  const [guardados, setGuardados] = useState(null); // datos ya en formato del formulario de envío
+  const [modo, setModo] = useState('otra'); // 'guardada' | 'otra'
+
+  useEffect(() => {
+    let activo = true;
+
+    const cargarGuardados = async () => {
+      if (!usuario) return;
+      const datos = await obtenerDatos(usuario);
+      if (!activo || !tieneDireccionCompleta(datos)) return;
+
+      const mapeado = aFormularioEnvio(datos);
+      setGuardados(mapeado);
+      setForm((prev) => ({ ...prev, ...mapeado, notas: prev.notas }));
+      setModo('guardada'); // viene elegida por defecto, para no tener que completar nada
+    };
+
+    cargarGuardados();
+
+    return () => {
+      activo = false;
+    };
+  }, [usuario]);
+
   // Si no hay nada en el carrito, no tiene sentido pedir datos de envío
   if (carrito.length === 0) {
     return <Navigate to="/carrito" replace />;
@@ -135,6 +164,19 @@ const Checkout = () => {
 
   // Se recalcula en cada render: por eso el check / la X cambian mientras escribes
   const errores = validar(form);
+
+  // Cambia entre "mi dirección guardada" y "otra dirección"
+  const elegirModo = (nuevo) => {
+    if (nuevo === modo) return;
+    setModo(nuevo);
+    setTocados({});
+    setErrorPago('');
+    setForm(
+      nuevo === 'guardada'
+        ? { ...FORM_INICIAL, ...guardados, notas: form.notas }
+        : { ...FORM_INICIAL, notas: form.notas }
+    );
+  };
 
   const manejarCambio = (e) => {
     const { name, value } = e.target;
@@ -156,6 +198,8 @@ const Checkout = () => {
 
     const primerError = CAMPOS_VALIDABLES.find((c) => errores[c]);
     if (primerError) {
+      // Si con la dirección guardada falta algo, se muestra el formulario completo para corregirlo
+      if (modo === 'guardada' && primerError !== 'telefono') setModo('otra');
       document.getElementsByName(primerError)[0]?.focus();
       return;
     }
@@ -174,6 +218,7 @@ const Checkout = () => {
           items: carrito.map((item) => ({ id: item.id, cantidad: item.cantidad || 1 })),
           codigo,
           envio: form,
+          cuenta: usuario || null, // para saber con qué cuenta se hizo el pedido
         }),
       });
 
@@ -239,6 +284,20 @@ const Checkout = () => {
     };
   };
 
+  const bloqueNotas = (
+    <div className="checkout-completo">
+      <TextField
+        name="notas"
+        label="Indicaciones para la entrega (opcional)"
+        value={form.notas}
+        onChange={manejarCambio}
+        fullWidth
+        multiline
+        minRows={2}
+      />
+    </div>
+  );
+
   return (
     <Container maxWidth="lg" className="carrito-container">
       <h1 className="carrito-titulo">Datos de envío</h1>
@@ -248,6 +307,57 @@ const Checkout = () => {
         <section className="carrito-caja" aria-label="Datos de envío">
           <h2 className="carrito-caja-titulo">¿A dónde enviamos tu pedido?</h2>
 
+          {guardados && (
+            <div className="checkout-opciones" role="radiogroup" aria-label="Dirección de envío">
+              <label className={`checkout-opcion ${modo === 'guardada' ? 'activa' : ''}`}>
+                <input
+                  type="radio"
+                  name="modo-envio"
+                  checked={modo === 'guardada'}
+                  onChange={() => elegirModo('guardada')}
+                />
+                <span className="checkout-opcion-cuerpo">
+                  <strong>Usar mi dirección guardada</strong>
+                  <span className="checkout-opcion-detalle">
+                    {guardados.nombre} {guardados.apellido}
+                  </span>
+                  <span className="checkout-opcion-detalle">{guardados.direccion}</span>
+                  <span className="checkout-opcion-detalle">
+                    {guardados.localidad}, {guardados.provincia} ({guardados.codigoPostal})
+                  </span>
+                </span>
+              </label>
+
+              <label className={`checkout-opcion ${modo === 'otra' ? 'activa' : ''}`}>
+                <input
+                  type="radio"
+                  name="modo-envio"
+                  checked={modo === 'otra'}
+                  onChange={() => elegirModo('otra')}
+                />
+                <span className="checkout-opcion-cuerpo">
+                  <strong>Enviar a otra dirección</strong>
+                </span>
+              </label>
+            </div>
+          )}
+
+          {modo === 'guardada' ? (
+            // Con la dirección guardada solo se pide lo que falte (teléfono) y las indicaciones
+            <div className="checkout-grid">
+              {!guardados?.telefono && (
+                <div className="checkout-completo">
+                  <TextField
+                    {...campo('telefono', 'Teléfono de contacto (con código de área)', {
+                      type: 'tel',
+                      autoComplete: 'tel',
+                    })}
+                  />
+                </div>
+              )}
+              {bloqueNotas}
+            </div>
+          ) : (
           <div className="checkout-grid">
             <TextField {...campo('nombre', 'Nombre', { autoComplete: 'given-name' })} />
             <TextField {...campo('apellido', 'Apellido', { autoComplete: 'family-name' })} />
@@ -289,18 +399,9 @@ const Checkout = () => {
               {...campo('codigoPostal', 'Código postal', { autoComplete: 'postal-code' })}
             />
 
-            <div className="checkout-completo">
-              <TextField
-                name="notas"
-                label="Indicaciones para la entrega (opcional)"
-                value={form.notas}
-                onChange={manejarCambio}
-                fullWidth
-                multiline
-                minRows={2}
-              />
-            </div>
+            {bloqueNotas}
           </div>
+          )}
 
           <Button
             component={Link}

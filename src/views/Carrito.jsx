@@ -8,7 +8,7 @@ import {
   precioDeItem,
   subtotalCarrito,
   descuentoCarrito,
-} from '../utils/CarritoUtils';
+} from '../utils/carritoUtils';
 import '../css/carrito.css';
 
 const Carrito = () => {

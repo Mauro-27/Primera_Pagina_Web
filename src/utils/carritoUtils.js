@@ -12,6 +12,9 @@ export const parsePrice = (precio) => {
 
 export const formatear = (valor) => `$${valor.toLocaleString('es-AR')}`;
 
+// Si el precio viene de la base de datos como número (50000) lo muestra como "$50.000"; si ya es texto, lo deja igual
+export const mostrarPrecio = (precio) => (typeof precio === 'number' ? formatear(precio) : precio);
+
 export const precioDeItem = (item) => parsePrice(item.precio || item.price);
 
 export const subtotalCarrito = (carrito) =>

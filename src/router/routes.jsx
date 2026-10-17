@@ -11,6 +11,7 @@ import DetallePintura from '../views/DetallePintura.jsx'; // <-- IMPORTAMOS LA V
 import MiCuenta from '../views/MiCuenta.jsx';
 import ResultadoPago from '../views/ResultadoPago.jsx';
 import Checkout from '../views/Checkout.jsx';
+import Inicio from '../views/Inicio.jsx';
 
 export const routes = createBrowserRouter([
   {
@@ -18,7 +19,11 @@ export const routes = createBrowserRouter([
     element: <App />, 
     children: [
       {
-        path: '',
+        path: '/',
+        element: <Inicio />
+      },
+      {
+        path: '/productos',
         element: <Galeria />
       },
       {

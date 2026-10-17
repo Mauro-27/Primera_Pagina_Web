@@ -1,0 +1,278 @@
+/* ===== Variables de la portada ===== */
+.inicio {
+  --fuente-titulo: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --crema: #fcfbf8;
+  --borde: #eaeaea;
+  --texto-suave: var(--text-muted, #6b6b6b);
+  padding: 8px 0 48px;
+}
+
+/* Evita que estilos globales de "section" (alto mínimo, márgenes, etc.) estiren las secciones de la portada */
+.inicio section {
+  min-height: 0 !important;
+  height: auto !important;
+}
+
+/* ===== Franja de beneficios ===== */
+.beneficios {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-content: start;
+  align-items: center;
+  gap: 20px 24px;
+  padding: 20px 24px;
+  margin: 0 0 32px;
+  background: #ffffff;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+}
+
+.beneficio {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.beneficio-icono {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f6f1ea;
+  color: var(--primary-color);
+  border-radius: 10px;
+  font-size: 0.95rem;
+}
+
+.beneficio-titulo {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.beneficio-texto {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: var(--texto-suave);
+}
+
+/* ===== Encabezado de la sección ===== */
+.categorias {
+  margin: 0;
+  padding: 0;
+}
+
+.categorias-encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 32px;
+  margin-bottom: 28px;
+}
+
+.inicio-eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary-color);
+}
+
+.inicio-titulo {
+  margin: 0;
+  font-family: var(--fuente-titulo);
+  font-size: clamp(1.8rem, 3.2vw, 2.4rem);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: #1f1b16;
+}
+
+.categorias-descripcion {
+  margin: 0;
+  max-width: 340px;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--texto-suave);
+}
+
+/* ===== Grilla de categorías ===== */
+.categorias-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.categoria-card {
+  position: relative;
+  display: block;
+  aspect-ratio: 1.15 / 1;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #ece6dc;
+  color: inherit;
+  text-decoration: none;
+  isolation: isolate;
+}
+
+.categoria-card:focus-visible {
+  outline: 3px solid var(--primary-color);
+  outline-offset: 3px;
+}
+
+.categoria-imagen,
+.categoria-fondo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.categoria-imagen {
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+/* Fondo de respaldo cuando todavía no hay foto de la categoría */
+.categoria-fondo {
+  background: linear-gradient(135deg, #efe7da 0%, #d9c9b3 100%);
+}
+
+/* Velo claro abajo, para que el texto oscuro se lea sobre cualquier foto */
+.categoria-velo {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(252, 251, 248, 0.96) 0%,
+    rgba(252, 251, 248, 0.82) 26%,
+    rgba(252, 251, 248, 0) 58%
+  );
+}
+
+.categoria-texto {
+  position: absolute;
+  left: 20px;
+  right: 76px;
+  bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.categoria-etiqueta {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary-color);
+}
+
+.categoria-titulo {
+  margin: 0;
+  font-family: var(--fuente-titulo);
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1.2;
+  color: #1f1b16;
+}
+
+.categoria-cantidad {
+  font-size: 0.82rem;
+  color: #4d463d;
+}
+
+.categoria-flecha {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  color: #1f1b16;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease;
+}
+
+.categoria-card:hover .categoria-imagen {
+  transform: scale(1.04);
+}
+
+.categoria-card:hover .categoria-flecha,
+.categoria-card:focus-visible .categoria-flecha {
+  background: var(--primary-color);
+  color: #ffffff;
+  transform: translate(2px, -2px);
+}
+
+/* ===== Pie de la sección ===== */
+.categorias-pie {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.categorias-ver-todas {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 28px;
+  border: 1px solid var(--primary-color);
+  border-radius: 999px;
+  color: var(--primary-color);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.categorias-ver-todas:hover {
+  background: var(--primary-color);
+  color: #ffffff;
+}
+
+/* ===== Tablet y celular ===== */
+@media (max-width: 900px) {
+  .beneficios {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .categorias-encabezado {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 520px) {
+  .beneficios {
+    grid-template-columns: 1fr;
+    padding: 16px;
+    margin-bottom: 28px;
+  }
+
+  .categorias-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .categoria-imagen,
+  .categoria-flecha {
+    transition: none;
+  }
+
+  .categoria-card:hover .categoria-imagen {
+    transform: none;
+  }
+}
